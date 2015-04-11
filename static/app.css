@@ -1,0 +1,39 @@
+.link {
+  stroke: #666;
+}
+
+.link.dotted {
+    stroke: #ccc;
+    stroke-dasharray: 5 5;
+}
+
+.node text {
+  pointer-events: none;
+  font: 10px sans-serif;
+}
+
+.primary text {
+    fill: #ef5c0e;
+}
+
+.ordinary text {
+    fill: #999;
+}
+
+/* tips */
+.d3-tip {
+    width: 240px;
+    height: 120px;
+    color: #ccc;
+    border-radius: 6px;
+    background: rgba(57, 58, 53, .8);
+}
+.d3-tip .left-side {
+    margin-top: 15px;
+    padding: 0px;
+    text-align: center;
+}
+.d3-tip .right-side {
+    height: 120px;
+    border-left: 1px solid;
+}
