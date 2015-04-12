@@ -40,10 +40,34 @@ gulp.task('watch', function() {
 });
 
 gulp.task('server', function () {
+    var proxy = require('proxy-middleware');
+    var url = require('url');
+    var proxyOptions = url.parse('http://i2.api.weibo.com/2');
+    proxyOptions.route = '/api';
     browserSync({
-        server: [__dirname, paths.build],
+        server: {
+            baseDir: [__dirname, paths.build],
+            middleware: [proxy(proxyOptions)]
+        },
         port: 9000
     });
 });
 
+gulp.task('connect', function () {
+    var connect = require('gulp-connect');
+    connect.server({
+        root: [__dirname, paths.build],
+        port: '8089',
+        // livereload: true,
+        middleware: function () {
+            var proxy = require('proxy-middleware');
+            var url = require('url');
+            var proxyOptions = url.parse('http://i2.api.weibo.com/2');
+            proxyOptions.route = '/api';
+            return [proxy(proxyOptions)];
+        }
+    });
+});
+
 gulp.task('default', ['html', 'browserify', 'server', 'watch']);
+// gulp.task('default', ['html', 'browserify', 'connect']);

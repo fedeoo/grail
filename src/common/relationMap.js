@@ -6,48 +6,57 @@ module.exports = function(options) {
         width = options.width || 960,
         height = options.height || 600;
 
-    function zoomed() {
-        svg.attr("transform", "translate(" + d3.event.translate + ")scale(" + d3.event.scale + ")");
-    }
-    var zoom = d3.behavior.zoom()
-        .scaleExtent([1, 10])
-        .on("zoom", zoomed);
-
     var svg = d3.select(container).append('svg')
         .attr('width', width)
         .attr('height', height)
-        .append('g')
-        .call(zoom);
+        .append('g');
     var tip = d3tip().attr('class', 'd3-tip').html(function (d) {
         return ['<div class="container-fluid ">',
                     '<div class="row">',
                         '<div class="col-md-4 left-side">',
                             '<div>',
                                '<img src="' + d.avatar_large + '" alt="用户头像" width="60px"/>',
-                           ' </div>',
-                           '<div>' + d.name + '</div>',
+                            ' </div>',
+                            '<p>' + d.name + '</p>',
+                            '<p>' + d.location + '</p>',
                         '</div>',
-                        '<div class="col-md-8 right-side"></div>',
+                        '<div class="col-md-8 right-side">',
+                            '<p><span>公司：</span></p>',
+                            '<p><span>共同点：</span></p>',
+                            '<p><span>标签：</span></p>',
+                        '</div>',
                     '</div>',
             '</div>'].join('');
     });
     var tiptimer;
     svg.call(tip);
 
-    var nodesData = options.nodes;
+    var nodesData = options.nodes; // distinguish between data and svn node
     var linksData = options.links;
 
+    nodesData[0].fixed = true;
+    nodesData[0].x = width / 2;
+    nodesData[0].y = height / 2;
     var force = d3.layout.force()
         .nodes(nodesData)
         .links(linksData)
-        .gravity(0.05)
-        .linkDistance(100)
-        .charge(-100)
-        .linkStrength(function(d) {
-            return d.weight;
-        })
+        // .gravity(0.05)
+        .linkDistance(120)
+        .charge(-150)
         .size([width, height])
         .start();
+    // paint links first so that put link under the node, link will not trigger mouse event    
+    var links = svg.selectAll('.link')
+        .data(linksData)
+        .enter()
+        .append('line')
+        .attr('class', function(d) {
+            var classNames = ['link'];
+            if (!d.directed) {
+                classNames.push('dotted');
+            }
+            return classNames.join(' ');
+        });
 
     var nodes = svg.selectAll('.node')
         .data(nodesData)
@@ -81,31 +90,20 @@ module.exports = function(options) {
 
     nodes.append("image")
         .attr("xlink:href", function (d) {
-            return d.profile_image_url;
+            return d.avatar_large;
         })
         .attr("x", -8)
         .attr("y", -8)
         .attr("width", 16)
         .attr("height", 16);
 
-    nodes.append('text')
-        .attr('dx', 12)
-        .attr('y', '.35em')
-        .text(function(d) {
-            return d.name;
-        });
+    // nodes.append('text')
+    //     .attr('dx', 12)
+    //     .attr('y', '.35em')
+    //     .text(function(d) {
+    //         return d.name;
+    //     });
 
-    var links = svg.selectAll('.link')
-        .data(linksData)
-        .enter()
-        .append('line')
-        .attr('class', function(d) {
-            var classNames = ['link'];
-            if (d.level < 10) {
-                classNames.push('dotted');
-            }
-            return classNames.join(' ');
-        });
     force.on("tick", function() {
         links.attr("x1", function(d) {
                 return d.source.x;

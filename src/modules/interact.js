@@ -1,5 +1,5 @@
 'use strict';
-var $ = require('jquery');
+var $ = window.$;
 var relationMap = require('common/relationMap.js');
 var util = require('core/util.js');
 var users,

@@ -22,14 +22,14 @@
 
 /* tips */
 .d3-tip {
-    width: 240px;
-    height: 120px;
+    width: 360px;
+    height: 130px;
+    padding: 15px 10px;
     color: #ccc;
     border-radius: 6px;
     background: rgba(57, 58, 53, .8);
 }
 .d3-tip .left-side {
-    margin-top: 15px;
     padding: 0px;
     text-align: center;
 }
